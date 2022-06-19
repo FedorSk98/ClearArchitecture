@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import com.feddos.cleararhetecture.R
+import com.feddos.cleararhetecture.app.App
 import com.feddos.cleararhetecture.data.repository.UserRepositoryImpl
 import com.feddos.cleararhetecture.data.storage.SharedPrefUserStorage
 import com.feddos.cleararhetecture.domain.models.SaveUserName
@@ -21,12 +22,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var saveTextBtn: Button
     private lateinit var getTextBtn: Button
     // endregion
-    
     private lateinit var viewModel: MainViewModel
+
+    @javax.inject.Inject
+    lateinit var vmFactory: MainViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        (applicationContext as App).appComponent.inject(this)
 
         editText = findViewById(R.id.editSaveText)
         saveTextBtn = findViewById(R.id.saveDataBtn)
@@ -35,7 +40,7 @@ class MainActivity : AppCompatActivity() {
 
 
         viewModel = ViewModelProvider(this,
-            MainViewModelFactory(this)).get(MainViewModel::class.java)
+            vmFactory).get(MainViewModel::class.java)
 
         saveTextBtn.setOnClickListener{
              viewModel.save(editText.text.toString())
